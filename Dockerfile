@@ -9,28 +9,28 @@ RUN apt-get update \
 
 
 # Grab the core snap
-RUN curl -fsSL -o core.snap $(curl -H 'X-Ubuntu-Series: 18' 'https://api.snapcraft.io/api/v1/snaps/details/core' | jq '.download_url' -r) \
+RUN curl --silent --location --output core.snap $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/snaps/details/core' | jq '.download_url' -r) \
  && mkdir -p /snap/core \
  && unsquashfs -d /snap/core/current core.snap \
  && rm core.snap
 
 
 # Grab the core18 snap
-RUN curl -fsSL -o core18.snap $(curl -H 'X-Ubuntu-Series: 18' 'https://api.snapcraft.io/api/v1/snaps/details/core18' | jq '.download_url' -r) \
+RUN curl --silent --location --output core18.snap $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/snaps/details/core18' | jq '.download_url' -r) \
  && mkdir -p /snap/core18 \
  && unsquashfs -d /snap/core18/current core18.snap \
  && rm core18.snap
 
 
 # Grab the gnome-3-34-1804-sdk snap
-RUN curl -fsSL -o gnome.snap $(curl -H 'X-Ubuntu-Series: 18' 'https://api.snapcraft.io/api/v1/snaps/details/gnome-3-34-1804-sdk' | jq '.download_url' -r) \
+RUN curl --silent --location --output gnome.snap $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/snaps/details/gnome-3-34-1804-sdk' | jq '.download_url' -r) \
  && mkdir -p /snap/gnome-3-34-1804-sdk \
  && unsquashfs -d /snap/gnome-3-34-1804-sdk/current gnome.snap \
  && rm gnome.snap
 
 
 # Grab the snapcraft snap from the candidate channel
-RUN curl -fsSL -o snapcraft.snap $(curl -H 'X-Ubuntu-Series: 18' 'https://api.snapcraft.io/api/v1/snaps/details/snapcraft?channel=candidate' | jq '.download_url' -r) \
+RUN curl --silent --location --output snapcraft.snap $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/snaps/details/snapcraft?channel=candidate' | jq '.download_url' -r) \
  && mkdir -p /snap/snapcraft \
  && unsquashfs -d /snap/snapcraft/current snapcraft.snap
 
