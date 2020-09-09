@@ -32,7 +32,8 @@ RUN curl --silent --location --output gnome.snap $(curl -H 'X-Ubuntu-Series: 16'
 # Grab the snapcraft snap from the candidate channel
 RUN curl --silent --location --output snapcraft.snap $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/snaps/details/snapcraft?channel=candidate' | jq '.download_url' -r) \
  && mkdir -p /snap/snapcraft \
- && unsquashfs -d /snap/snapcraft/current snapcraft.snap
+ && unsquashfs -d /snap/snapcraft/current snapcraft.snap \
+ && rm snapcraft.snap
 
 
 # Create a snapcraft runner
