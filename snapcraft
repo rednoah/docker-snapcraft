@@ -1,2 +1,0 @@
-#!/bin/sh
-exec "$SNAP/usr/bin/python3" "$SNAP/bin/snapcraft" "$@"
