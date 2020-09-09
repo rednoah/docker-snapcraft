@@ -1,4 +1,4 @@
-FROM ubuntu:xenial as builder
+FROM ubuntu:bionic as builder
 
 # Grab dependencies
 RUN apt-get update
