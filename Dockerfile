@@ -1,4 +1,4 @@
-FROM ubuntu:bionic as builder
+FROM ubuntu:bionic
 
 
 # Grab dependencies
@@ -34,14 +34,6 @@ RUN echo "#!/bin/sh" > /snap/bin/snapcraft
 RUN snap_version="$(awk '/^version:/{print $2}' /snap/snapcraft/current/meta/snap.yaml)" && echo "export SNAP_VERSION=\"$snap_version\"" >> /snap/bin/snapcraft
 RUN echo 'exec "$SNAP/usr/bin/python3" "$SNAP/bin/snapcraft" "$@"' >> /snap/bin/snapcraft
 RUN chmod +x /snap/bin/snapcraft
-
-
-# Multi-stage build, only need the snaps from the builder. Copy them one at a time so they can be cached.
-FROM ubuntu:xenial
-COPY --from=builder /snap/core /snap/core
-COPY --from=builder /snap/core18 /snap/core18
-COPY --from=builder /snap/snapcraft /snap/snapcraft
-COPY --from=builder /snap/bin/snapcraft /snap/bin/snapcraft
 
 
 # Generate locale and install dependencies.
