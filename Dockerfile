@@ -1,10 +1,11 @@
 FROM ubuntu:bionic
 
 
-# Grab dependencies
+# Grab build dependencies
 RUN apt-get update \
  && apt-get dist-upgrade --yes \
- && apt-get install --yes curl jq squashfs-tools \ 
+ && apt-get install --yes curl jq squashfs-tools \
+ && apt-get install --yes binutils binutils-common binutils-x86-64-linux-gnu cpp cpp-7 gcc gcc-7 gcc-7-base libasan4 libatomic1 libbinutils libc-dev-bin libc6-dev libcc1-0 libcilkrts5 libgcc-7-dev libgomp1 libisl19 libitm1 liblsan0 libmpc3 libmpfr6 libmpx2 libquadmath0 libtsan0 libubsan0 linux-libc-dev make manpages manpages-dev \
  && rm -rvf /var/lib/apt/lists/*
 
 
