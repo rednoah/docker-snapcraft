@@ -26,12 +26,8 @@ RUN curl -L $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/sna
  && unsquashfs -d /snap/snapcraft/current snapcraft.snap
 
 
-# Create a snapcraft runner
-RUN mkdir -p /snap/bin \
- && echo "#!/bin/sh" > /snap/bin/snapcraft \
- && snap_version="$(awk '/^version:/{print $2}' /snap/snapcraft/current/meta/snap.yaml)" && echo "export SNAP_VERSION=\"$snap_version\"" >> /snap/bin/snapcraft \
- && echo 'exec "$SNAP/usr/bin/python3" "$SNAP/bin/snapcraft" "$@"' >> /snap/bin/snapcraft \ 
- && chmod +x /snap/bin/snapcraft
+# Copy a snapcraft runner
+COPY snapcraft /snap/bin/snapcraft
 
 
 # Generate locale and install dependencies.
@@ -56,4 +52,4 @@ ENV SNAP_ARCH="amd64"
 VOLUME /build
 WORKDIR /build
 
-ENTRYPOINT ["snapcraft"]
+ENTRYPOINT ["/snap/bin/snapcraft"]
