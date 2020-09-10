@@ -60,7 +60,7 @@ RUN apt-get update \
 
  # Pre-Install application dependencies
 RUN apt-get update \
- && apt-get install --yes default-jdk mediainfo libchromaprint-tools xdg-utils \
+ && apt-get install --yes mediainfo xdg-utils \
  && rm -rvf /var/lib/apt/lists/*
 
 
