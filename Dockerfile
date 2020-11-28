@@ -60,7 +60,7 @@ RUN apt-get update \
 
  # Pre-Install application dependencies
 RUN apt-get update \
- && apt-get install --yes mediainfo xdg-utils mkvtoolnix atomicparsley \
+ && apt-get install --yes mediainfo xdg-utils mkvtoolnix atomicparsley file \
  && rm -rvf /var/lib/apt/lists/*
 
 
