@@ -1,4 +1,6 @@
-FROM ubuntu:bionic
+FROM ubuntu:18.04
+
+LABEL maintainer="Reinhard Pointner <rednoah@filebot.net>"
 
 
 # Grab build dependencies
@@ -75,7 +77,6 @@ ENV SNAP_ARCH="amd64"
 
 
 # Run snapcraft
-VOLUME /build
 WORKDIR /build
 
 ENTRYPOINT ["/snap/bin/snapcraft"]
