@@ -12,48 +12,6 @@ RUN set -eux \
  && rm -rf /var/lib/apt/lists/*
 
 
-# Grab core snap
-RUN set -eux \
- && SNAP=core \
- && curl --silent --location --output $SNAP.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP" | jq ".download_url" -r) \
- && mkdir -p /snap/$SNAP \
- && unsquashfs -d /snap/$SNAP/current $SNAP.snap \
- && rm $SNAP.snap
-
-# Grab core20 snap
-RUN set -eux \
- && SNAP=core20 \
- && curl --silent --location --output $SNAP.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP" | jq ".download_url" -r) \
- && mkdir -p /snap/$SNAP \
- && unsquashfs -d /snap/$SNAP/current $SNAP.snap \
- && rm $SNAP.snap
-
-# Grab gnome-3-38-2004-sdk snap
-RUN set -eux \
- && SNAP=gnome-3-38-2004-sdk \
- && curl --silent --location --output $SNAP.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP" | jq ".download_url" -r) \
- && mkdir -p /snap/$SNAP \
- && unsquashfs -d /snap/$SNAP/current $SNAP.snap \
- && rm $SNAP.snap
-
-# Grab snapcraft snap
-RUN set -eux \
- && SNAP=snapcraft \
- && curl --silent --location --output $SNAP.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP" | jq ".download_url" -r) \
- && mkdir -p /snap/$SNAP \
- && unsquashfs -d /snap/$SNAP/current $SNAP.snap \
- && rm $SNAP.snap
-
-
-# Create a snapcraft runner
-RUN set -eux \
- && mkdir -p /snap/bin \
- && echo "#!/bin/sh" > /snap/bin/snapcraft \
- && snap_version="$(awk '/^version:/{print $2}' /snap/snapcraft/current/meta/snap.yaml)" && echo "export SNAP_VERSION=\"$snap_version\"" >> /snap/bin/snapcraft \
- && echo 'exec "$SNAP/usr/bin/python3" "$SNAP/bin/snapcraft" "$@"' >> /snap/bin/snapcraft \
- && chmod +x /snap/bin/snapcraft
-
-
 # Pre-Install application dependencies
 RUN set -eux \
  && apt-get update \
@@ -61,11 +19,55 @@ RUN set -eux \
  && rm -rvf /var/lib/apt/lists/*
 
 
-# Pre-Install build dependencies
+# Grab core snap
 RUN set -eux \
- && apt-get update \
- && apt-get install --yes python3 \
- && rm -rvf /var/lib/apt/lists/*
+ && SNAP_NAME=core \
+ && curl --silent --location --output $SNAP_NAME.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP_NAME" | jq ".download_url" -r) \
+ && mkdir -p /snap/$SNAP_NAME \
+ && unsquashfs -d /snap/$SNAP_NAME/current $SNAP_NAME.snap \
+ && rm $SNAP_NAME.snap
+
+# Grab core20 snap
+RUN set -eux \
+ && SNAP_NAME=core20 \
+ && curl --silent --location --output $SNAP_NAME.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP_NAME" | jq ".download_url" -r) \
+ && mkdir -p /snap/$SNAP_NAME \
+ && unsquashfs -d /snap/$SNAP_NAME/current $SNAP_NAME.snap \
+ && rm $SNAP_NAME.snap
+
+# Grab gnome-3-38-2004-sdk snap
+RUN set -eux \
+ && SNAP_NAME=gnome-3-38-2004-sdk \
+ && curl --silent --location --output $SNAP_NAME.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP_NAME" | jq ".download_url" -r) \
+ && mkdir -p /snap/$SNAP_NAME \
+ && unsquashfs -d /snap/$SNAP_NAME/current $SNAP_NAME.snap \
+ && rm $SNAP_NAME.snap
+
+# Grab core18 snap (required by snapcraft)
+RUN set -eux \
+ && SNAP_NAME=core18 \
+ && curl --silent --location --output $SNAP_NAME.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP_NAME" | jq ".download_url" -r) \
+ && mkdir -p /snap/$SNAP_NAME \
+ && unsquashfs -d /snap/$SNAP_NAME/current $SNAP_NAME.snap \
+ && rm $SNAP_NAME.snap
+
+# Grab snapcraft snap
+RUN set -eux \
+ && SNAP_NAME=snapcraft \
+ && curl --silent --location --output $SNAP_NAME.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP_NAME" | jq ".download_url" -r) \
+ && mkdir -p /snap/$SNAP_NAME \
+ && unsquashfs -d /snap/$SNAP_NAME/current $SNAP_NAME.snap \
+ && rm $SNAP_NAME.snap
+
+
+# Create a snapcraft runner
+RUN set -eux \
+ && SNAP_VERSION="$(awk '/^version:/{print $2}' /snap/snapcraft/current/meta/snap.yaml)" \
+ && mkdir -p /snap/bin \
+ && echo '#!/bin/sh' > /snap/bin/snapcraft \
+ && echo "export SNAP_VERSION=$SNAP_VERSION" >> /snap/bin/snapcraft \
+ && echo 'exec "$SNAP/usr/bin/python3" "$SNAP/bin/snapcraft" "$@"' >> /snap/bin/snapcraft \
+ && chmod +x /snap/bin/snapcraft
 
 
 # Set the proper environment
