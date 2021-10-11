@@ -15,7 +15,7 @@ RUN set -eux \
 # Install application dependencies
 RUN set -eux \
  && apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install --yes default-jdk openjfx libjna-java zenity xdg-utils mediainfo libchromaprint-tools unrar p7zip-full p7zip-rar mkvtoolnix atomicparsley \
+ && DEBIAN_FRONTEND=noninteractive apt-get install --install-recommends --yes default-jdk openjfx libjna-java zenity xdg-utils mediainfo libchromaprint-tools unrar p7zip-full p7zip-rar mkvtoolnix atomicparsley \
  && rm -rf /var/lib/apt/lists/*
 
 
