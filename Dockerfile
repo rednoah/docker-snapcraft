@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 LABEL maintainer="Reinhard Pointner <rednoah@filebot.net>"
 
@@ -6,36 +6,38 @@ LABEL maintainer="Reinhard Pointner <rednoah@filebot.net>"
 # Grab build dependencies
 RUN apt-get update \
  && apt-get dist-upgrade --yes \
- && apt-get install --yes curl jq squashfs-tools \
+ && apt-get install --yes sudo locales snapd curl jq squashfs-tools \
+ && locale-gen en_US.UTF-8 \
  && rm -rvf /var/lib/apt/lists/*
 
 
-# Grab the core snap
-RUN curl --silent --location --output core.snap $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/snaps/details/core' | jq '.download_url' -r) \
- && mkdir -p /snap/core \
- && unsquashfs -d /snap/core/current core.snap \
- && rm core.snap
+# Grab core snap
+RUN SNAP=core \
+ && curl --silent --location --output $SNAP.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP" | jq ".download_url" -r) \
+ && mkdir -p /snap/$SNAP \
+ && unsquashfs -d /snap/$SNAP/current $SNAP.snap \
+ && rm $SNAP.snap
 
+# Grab core20 snap
+RUN SNAP=core20 \
+ && curl --silent --location --output $SNAP.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP" | jq ".download_url" -r) \
+ && mkdir -p /snap/$SNAP \
+ && unsquashfs -d /snap/$SNAP/current $SNAP.snap \
+ && rm $SNAP.snap
 
-# Grab the core18 snap
-RUN curl --silent --location --output core18.snap $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/snaps/details/core18' | jq '.download_url' -r) \
- && mkdir -p /snap/core18 \
- && unsquashfs -d /snap/core18/current core18.snap \
- && rm core18.snap
+# Grab gnome-3-38-2004-sdk snap
+RUN SNAP=gnome-3-38-2004-sdk \
+ && curl --silent --location --output $SNAP.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP" | jq ".download_url" -r) \
+ && mkdir -p /snap/$SNAP \
+ && unsquashfs -d /snap/$SNAP/current $SNAP.snap \
+ && rm $SNAP.snap
 
-
-# Grab the gnome-3-34-1804-sdk snap
-RUN curl --silent --location --output gnome.snap $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/snaps/details/gnome-3-34-1804-sdk' | jq '.download_url' -r) \
- && mkdir -p /snap/gnome-3-34-1804-sdk \
- && unsquashfs -d /snap/gnome-3-34-1804-sdk/current gnome.snap \
- && rm gnome.snap
-
-
-# Grab the snapcraft snap from the candidate channel
-RUN curl --silent --location --output snapcraft.snap $(curl -H 'X-Ubuntu-Series: 16' 'https://api.snapcraft.io/api/v1/snaps/details/snapcraft?channel=candidate' | jq '.download_url' -r) \
- && mkdir -p /snap/snapcraft \
- && unsquashfs -d /snap/snapcraft/current snapcraft.snap \
- && rm snapcraft.snap
+# Grab snapcraft snap
+RUN SNAP=snapcraft \
+ && curl --silent --location --output $SNAP.snap $(curl -H "X-Ubuntu-Series: 16" "https://api.snapcraft.io/api/v1/snaps/details/$SNAP" | jq ".download_url" -r) \
+ && mkdir -p /snap/$SNAP \
+ && unsquashfs -d /snap/$SNAP/current $SNAP.snap \
+ && rm $SNAP.snap
 
 
 # Create a snapcraft runner
@@ -44,14 +46,6 @@ RUN mkdir -p /snap/bin \
  && snap_version="$(awk '/^version:/{print $2}' /snap/snapcraft/current/meta/snap.yaml)" && echo "export SNAP_VERSION=\"$snap_version\"" >> /snap/bin/snapcraft \
  && echo 'exec "$SNAP/usr/bin/python3" "$SNAP/bin/snapcraft" "$@"' >> /snap/bin/snapcraft \
  && chmod +x /snap/bin/snapcraft
-
-
-# Generate locale and install dependencies
-RUN apt-get update \
- && apt-get dist-upgrade --yes \
- && apt-get install --yes snapd sudo locales \
- && locale-gen en_US.UTF-8 \
- && rm -rvf /var/lib/apt/lists/*
 
 
 # Pre-Install build dependencies
@@ -78,5 +72,6 @@ ENV SNAP_ARCH="amd64"
 
 # Run snapcraft
 WORKDIR /build
+
 
 ENTRYPOINT ["/snap/bin/snapcraft"]
