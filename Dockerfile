@@ -48,12 +48,6 @@ RUN mkdir -p /snap/bin \
  && chmod +x /snap/bin/snapcraft
 
 
-# Pre-Install build dependencies
-RUN apt-get update \
- && apt-get install --yes binutils binutils-common \
- && rm -rvf /var/lib/apt/lists/*
-
-
 # Pre-Install application dependencies
 RUN apt-get update \
  && apt-get install --yes default-jdk openjfx libjna-java zenity xdg-utils mediainfo libchromaprint-tools unrar p7zip-full p7zip-rar mkvtoolnix atomicparsley \
