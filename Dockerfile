@@ -70,6 +70,13 @@ RUN set -eux \
  && chmod +x /snap/bin/snapcraft
 
 
+# Pre-Install build dependencies
+RUN set -eux \
+ && apt-get update \
+ && apt-get install --yes binutils binutils-common binutils-x86-64-linux-gnu gcc gcc-9 libasan5 libatomic1 libbinutils libc-dev-bin libc6-dev libcc1-0 libcrypt-dev libctf-nobfd0 libctf0 libgcc-9-dev libitm1 liblsan0 libquadmath0 libtsan0 libubsan1 linux-libc-dev make manpages manpages-dev \
+ && rm -rf /var/lib/apt/lists/*
+
+
 # Set the proper environment
 ENV LANG="en_US.UTF-8"
 ENV LANGUAGE="en_US:en"
