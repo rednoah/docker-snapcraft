@@ -3,20 +3,20 @@ FROM ubuntu:20.04
 LABEL maintainer="Reinhard Pointner <rednoah@filebot.net>"
 
 
-# Grab build dependencies
+# Install build dependencies
 RUN set -eux \
  && apt-get update \
  && apt-get dist-upgrade --yes \
+ && apt-get install --yes binutils binutils-common binutils-x86-64-linux-gnu gcc gcc-9 libasan5 libatomic1 libbinutils libc-dev-bin libc6-dev libcc1-0 libcrypt-dev libctf-nobfd0 libctf0 libgcc-9-dev libitm1 liblsan0 libquadmath0 libtsan0 libubsan1 linux-libc-dev make manpages manpages-dev \
  && apt-get install --yes sudo locales snapd curl jq squashfs-tools \
  && locale-gen en_US.UTF-8 \
  && rm -rf /var/lib/apt/lists/*
 
-
-# Pre-Install application dependencies
+# Install application dependencies
 RUN set -eux \
  && apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install --yes default-jdk openjfx libjna-java zenity xdg-utils mediainfo libchromaprint-tools unrar p7zip-full p7zip-rar mkvtoolnix atomicparsley \
- && rm -rvf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/*
 
 
 # Grab core snap
@@ -68,13 +68,6 @@ RUN set -eux \
  && echo "export SNAP_VERSION=$SNAP_VERSION" >> /snap/bin/snapcraft \
  && echo 'exec "$SNAP/usr/bin/python3" "$SNAP/bin/snapcraft" "$@"' >> /snap/bin/snapcraft \
  && chmod +x /snap/bin/snapcraft
-
-
-# Pre-Install build dependencies
-RUN set -eux \
- && apt-get update \
- && apt-get install --yes binutils binutils-common binutils-x86-64-linux-gnu gcc gcc-9 libasan5 libatomic1 libbinutils libc-dev-bin libc6-dev libcc1-0 libcrypt-dev libctf-nobfd0 libctf0 libgcc-9-dev libitm1 liblsan0 libquadmath0 libtsan0 libubsan1 linux-libc-dev make manpages manpages-dev \
- && rm -rf /var/lib/apt/lists/*
 
 
 # Set the proper environment
