@@ -61,6 +61,13 @@ RUN set -eux \
  && rm -rvf /var/lib/apt/lists/*
 
 
+# Pre-Install build dependencies
+RUN set -eux \
+ && apt-get update \
+ && apt-get install --yes python3 \
+ && rm -rvf /var/lib/apt/lists/*
+
+
 # Set the proper environment
 ENV LANG="en_US.UTF-8"
 ENV LANGUAGE="en_US:en"
